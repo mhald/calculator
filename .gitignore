@@ -1,0 +1,6 @@
+erl_crash.dump
+.DS_Store
+deps
+ebin
+log
+rel/calculator

@@ -1,0 +1,15 @@
+{application, calculator,
+ [
+  {description, "Calculator REST Service"},
+  {vsn, "1.0.7"},
+  {registered, []},
+  {start_phases, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  protobuffs
+                 ]},
+  {mod, { calculator_app, []}},
+  {env, []}
+ ]}.
+
