@@ -25,8 +25,7 @@ echo '   "vcs":    {"flavor": "git", "base_url": "https://github.com/mhald/calcu
 echo '   "mapping": {'
 
 
-#find apps -name "*.erl" | sed -e 's/.erl$//' -e "s=\(.*\)/\([^\/]*\)=      \"\2\": \"https://github.com/$ORG/$REPO/blob/$CSUM/calculator/\1/\2.erl\",="
-find apps -name "*.erl" | sed -e 's/.erl$//' -e "s=\(.*\)/\([^\/]*\)=      \"\2\": \"https://github.com/$ORG/$REPO/blob/$CSUM/apps/calculator/src/\1/\2.erl\",="
+find apps -name "*.erl" | sed -e 's/.erl$//' -e "s=\(.*\)/\([^\/]*\)=      \"\2\": \"https://github.com/$ORG/$REPO/blob/$CSUM/\1/\2.erl\",="
 echo ''
 
 for DIR in `ls -1 deps`
