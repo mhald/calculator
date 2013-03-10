@@ -18,14 +18,20 @@ start(_StartType, _StartArgs) -> supervisor:start_link({local, ?MODULE}, ?MODULE
 stop(_State) -> ok.
 
 init([]) ->
-    lager:debug("Starting http listener..."),
+    lager:info("Starting http listener..."),
     {ok, Http_Listen_Port} = application:get_env(calculator, http_listen_port),
     Http_Dispatch = [{'_', [
                             {[<<"api">>, '_'],           http_calculator_handler, []}
                            ]}],
-
     cowboy:start_http(http_handler, 10, [{port, Http_Listen_Port}], [{dispatch, Http_Dispatch}, {poolsize,10}]),
-    lager:debug("Done!\n"),
+
+    lager:info("Starting ibrowse"),
+    application:start(ibrowse),
+
+    lager:info("Sending source code mapping"),
+    calculator_util:post_mapping(),
+
+    lager:info("Done!\n"),
 
     Children = [
                   {calculator_server,    {calculator_server,    start_link, []}, permanent, 5000, worker, [calculator_server]}
