@@ -32,7 +32,7 @@ top(Length, Sort) ->
                                 not pman_process:is_system_process(P)])),
                         Length)
             end),
-    lager:info("Process List gathered in ~~~p secs", [round(Time/1000000)]),
+    lager:info("Process List gathered in ~p secs", [round(Time/1000000)]),
     [{Pid,
       [{nm, top_field(nm, Pid)},
        {mq, top_field(mq, Pid)},
