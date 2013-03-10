@@ -34,20 +34,18 @@ terminate(_Req, _State) -> ok.
 
 %% example.loggingwithpopcorn.com/api/calculator?x=5&y=2&function=*
 handle_path(<<"GET">>, [<<"api">>, <<"calculator">>], Req, State) ->
-    {ok, Post, Req2} = cowboy_req:body(Req),
     {X, _} = cowboy_req:qs_val(<<"x">>, Req),
     {Y, _} = cowboy_req:qs_val(<<"y">>, Req),
     {Function, _} = cowboy_req:qs_val(<<"function">>, Req),
+    lager:debug("Calculator request for ~s~s~s", [X, Function, Y]),
     Result = calculate(binary_to_integer(X), Function, binary_to_integer(Y)),
-    {ok, Reply} = cowboy_req:reply(200, [{<<"Content-type">>, <<"text/plain">>}], int_to_binary(Result), Req2),
+    {ok, Reply} = cowboy_req:reply(200, [{<<"Content-type">>, <<"text/plain">>}], integer_to_binary(Result), Req),
     {ok, Reply, State};
 
 handle_path(_, _, Req, State) ->
     {ok, Reply} = cowboy_req:reply(401, [], [], Req),
     {ok, Reply, State}.
 
-int_to_binary(Value) -> list_to_binary(integer_to_list(Value)).
-binary_to_integer(Value) -> list_to_integer(binary_to_list(Value)).
 calculate(X, <<"+">>, Y) -> X + Y;
 calculate(X, <<"-">>, Y) -> X - Y;
 calculate(X, <<"*">>, Y) -> X * Y;
