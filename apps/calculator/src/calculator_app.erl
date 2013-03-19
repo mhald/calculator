@@ -21,7 +21,7 @@ init([]) ->
     lager:info("Starting http listener..."),
     {ok, Http_Listen_Port} = application:get_env(calculator, http_listen_port),
     Http_Dispatch = [{'_', [
-                            {[<<"api">>, '_'],           http_calculator_handler, []}
+                            {[<<"api">>, '_'], http_calculator_handler, []}
                            ]}],
     cowboy:start_http(http_handler, 10, [{port, Http_Listen_Port}], [{dispatch, Http_Dispatch}, {poolsize,10}]),
 
