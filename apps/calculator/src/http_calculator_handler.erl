@@ -34,12 +34,23 @@ terminate(_Req, _State) -> ok.
 
 %% example.loggingwithpopcorn.com/api/calculator?x=5&y=2&function=*
 handle_path(<<"POST">>, [<<"api">>, <<"calculator">>], Req, State) ->
-    {ok, Post, _} = cowboy_req:body_qs(Req),
+    {ok, [{Post, _}], _} = cowboy_req:body_qs(Req),
     lager:debug("Calculator request for ~s", [Post]),
-    Result = calc:rpn_calc(Post),
-    {ok, Reply} = cowboy_req:reply(200, [{<<"Content-type">>, <<"text/plain">>}], integer_to_binary(Result), Req),
-    {ok, Reply, State};
+    Eqn = binary_to_list(Post),
+    case is_minus(Post) of
+        true -> lager:error("Unhandled operator minus request=~s", [Post]),
+                {ok, Reply} = cowboy_req:reply(500, [{<<"Content-type">>, <<"text/plain">>}], [], Req),
+                {ok, Reply, State};
+	false -> Result = calc:rpn(Eqn),
+                 {ok, Reply} = cowboy_req:reply(200, [{<<"Content-type">>, <<"text/plain">>}], num_as_binary(Result), Req),
+                 {ok, Reply, State}
+    end;
 
 handle_path(_, _, Req, State) ->
     {ok, Reply} = cowboy_req:reply(401, [], [], Req),
     {ok, Reply, State}.
+
+num_as_binary(Num) when is_integer(Num) -> integer_to_binary(Num);
+num_as_binary(Num) -> io_lib:format("~p",[Num]).
+
+is_minus(Bin) -> binary:match(Bin, [<<"-">>], []) =/= nomatch.
